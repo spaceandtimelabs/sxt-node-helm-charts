@@ -39,6 +39,11 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Conventional Changelog Action
         id: conventional-changelog
         uses: TriPSs/conventional-changelog-action@v5
@@ -49,13 +54,6 @@ jobs:
           git-push: false
           skip-on-empty: false # Always create commit
 
-      - name: Push Conventional Changelog
-        uses: ad-m/github-push-action@master
-        id: push
-        with:
-          github_token: ${{ steps.app-token.outputs.token }}
-          branch: ${{ github.ref }}
-
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
@@ -63,3 +61,13 @@ jobs:
           body: ${{ steps.conventional-changelog.outputs.changelog }}
           token: ${{ steps.app-token.outputs.token }}
           makeLatest: true
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.14.4
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.4.0
+        env:
+          CR_TOKEN: "${{ steps.app-token.outputs.token }}"
