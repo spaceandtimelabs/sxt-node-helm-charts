@@ -17,27 +17,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Load Secrets
-        uses: 1password/load-secrets-action@v1
-        with:
-          export-env: true
-        env:
-          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
-          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
-          GITHUB_APP_ID: op://op-github-devops/cosmic-agent-labs/app-id
-          GITHUB_PRIVATE_KEY: op://op-github-devops/cosmic-agent-labs/private-key
+#      - name: Load Secrets
+#        uses: 1password/load-secrets-action@v1
+#        with:
+#          export-env: true
+#        env:
+#          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+#          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
+#          GITHUB_APP_ID: op://op-github-devops/cosmic-agent-labs/app-id
+#          GITHUB_PRIVATE_KEY: op://op-github-devops/cosmic-agent-labs/private-key
 
-      - name: Create GitHub App Token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ env.GITHUB_APP_ID }}
-          private-key: ${{ env.GITHUB_PRIVATE_KEY }}
+#      - name: Create GitHub App Token
+#        id: app-token
+#        uses: actions/create-github-app-token@v1
+#        with:
+#          app-id: ${{ env.GITHUB_APP_ID }}
+#          private-key: ${{ env.GITHUB_PRIVATE_KEY }}
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ steps.app-token.outputs.token }}
+#          token: ${{ steps.app-token.outputs.token }}
           ref: ${{ github.head_ref }}
           # Make sure the value of GITHUB_TOKEN will not be persisted in repo's config
           persist-credentials: false
@@ -54,7 +54,8 @@ jobs:
         id: conventional-changelog
         uses: TriPSs/conventional-changelog-action@v5
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+#          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-git-pull: true
           skip-version-file: false
           version-file: charts/sxt-node-chart/Chart.yaml
