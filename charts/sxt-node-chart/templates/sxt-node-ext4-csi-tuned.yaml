@@ -1,0 +1,21 @@
+{{ $enableTunedCSI := .Values.tunedCSI }}
+{{- if ne .Values.useDefaultStorageClass false }}
+{{ $enableTunedCSI = false }}
+{{- end }}
+{{- if $enableTunedCSI -}}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sxt-node-ext4-csi-tuned
+provisioner: disk.csi.azure.com
+parameters:
+  skuName: PremiumV2_LRS
+  fsType: ext4
+  DiskIOPSReadWrite: "16000"
+  DiskMBpsReadWrite: "1200"
+  cachingMode: "None"
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+{{- end }}

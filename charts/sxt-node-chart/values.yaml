@@ -1,0 +1,72 @@
+# Default values for sxt-tx-node.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+networkID: dev
+imageRegistryCredentials:
+tunedCSI: true
+useDefaultStorageClass: false
+
+sxt:
+  replicaCount: 1
+  nameSuffix:
+  restartOnFailure: true
+  useExistingPV: false
+  isValidator: true
+  isRpcNode: false
+  flightSQL:
+    enabled: false
+    name: sxt-node-flightsql-svc
+    ipaddr:
+    subnet:
+    resourceGroup:
+  existingPV:
+  manual: false
+  image:
+    repository: spaceandtime.jfrog.io/sxt-docker-central/sxt-node
+    pullPolicy: IfNotPresent
+    tag: "0.8.0"
+  p2pService: true
+  port: 30333
+  rpcPort: 9944
+  p2pLbPort: 30333
+  genesisPath:
+  bootnodes:
+    - /ip4/40.91.75.245/tcp/30333/p2p/12D3KooWDV5kmYUR5nxruFBfdGX2ZMR43iSe3SfmopZ3sLBFvZzc
+    - /ip4/20.99.130.169/tcp/30333/p2p/12D3KooWGAQAg7iZgyn8wnnT8nkDo9NVAPbfubpMgL1mYTRNgjdD
+    - /ip4/40.65.73.118/tcp/30333/p2p/12D3KooWLLf8tW3PPbj9MCda9rfypNN5xyZRi1bKoLj8s9UkeJDZ
+  secret:
+    name: "validatorseed"
+    key: "Secret-Seed"
+    nodeKey: "Node-Key"
+#  dbsecret:
+#    name: "sxt-db-passwords"
+#    pgkey: "PGDB_PASSWORD"
+#    fsqlkey: "FSQL_PASSWORD"
+#    pgurlkey: "PGDB_URL"
+  service:
+    enabled: false
+    name: sxt-node-jsonrpc-svc
+    ipaddr:
+    subnet:
+    resourceGroup:
+    selectors:
+      statefulset.kubernetes.io/pod-name: sxt-node-0
+    type: LoadBalancer
+    annotations: {}
+  nodeSelectors:
+    agentpool: archive1
+  resources:
+    storage: 1Ti
+    cpu: 13000m
+    memory: 24G
+
+ingress-nginx:
+  enabled: false
+  nameOverride: "sxtnode-p2p-lb-nginx"
+  fullnameOverride: "sxtnode-p2p-lb-nginx"
+
+external-dns:
+  enabled: false
+  nameOverride: "external-dns-cloudflare"
+  fullnameOverride: "external-dns-cloudflare"

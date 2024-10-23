@@ -1,0 +1,256 @@
+{{ $storageDir := "/storage" }}
+{{ $initDirList := "/storage/data /storage/keys /storage/pgdata /storage/pgdbdata /storage/logs /storage/sxtuser" }}
+{{ $appname := "sxt-node" }}
+{{ $pvcname := "azuredisk" }}
+{{ $customDBPasswords := false }}
+{{- if eq .Values.sxt.isValidator true }}
+{{- if ne .Values.sxt.dbsecret nil }}
+{{ $customDBPasswords = true }}
+{{- end }}
+{{- end }}
+{{- if ne .Values.useDefaultStorageClass false }}
+{{ $pvcname = "storagedisk" }}
+{{- end }}
+{{ $chainspec := .Values.networkID }}
+{{- if ne .Values.sxt.genesisPath nil -}}
+{{ $chainspec = .Values.sxt.genesisPath }}
+{{- end -}}
+{{- if ne .Values.sxt.nameSuffix nil -}}
+{{ $appname = printf "sxt-node-%s" .Values.sxt.nameSuffix }}
+{{ $pvcname = printf "%s-%s" $pvcname .Values.sxt.nameSuffix }}
+{{- end -}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $pvcname }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.sxt.resources.storage }}
+{{- if ne .Values.useDefaultStorageClass true }}
+  storageClassName: sxt-node-ext4-csi-tuned
+{{- end }}
+{{- if .Values.sxt.useExistingPV -}}
+  volumeName: {{ .Values.sxt.existingPV }}
+{{- end }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: "sxt-node"
+  name: {{ $appname }}
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  replicas: {{ .Values.sxt.replicaCount }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: "sxt-node"
+  serviceName: {{ $appname }}
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: "sxt-node"
+    spec:
+      securityContext:
+        fsGroup: 1001
+      nodeSelector:
+{{- range $env_key, $env_value := .Values.sxt.nodeSelectors }}
+        {{ $env_key }}: "{{ $env_value }}"
+{{- end }}
+      initContainers:
+      - name: mkdir
+        command:
+        - /bin/bash
+        - -c
+        - >-
+          mkdir -p {{ $initDirList }};
+          chmod 700 {{ $storageDir }}/pgdata /pg_data;
+        image: "{{ .Values.sxt.image.repository }}:{{ default .Chart.AppVersion .Values.sxt.image.tag }}"
+        imagePullPolicy: {{ .Values.sxt.image.pullPolicy }}
+        volumeMounts:
+        - mountPath: {{ $storageDir }}
+          name: acsdisk
+{{- if .Values.sxt.isValidator }}
+      - name: mkkey
+        command:
+        - /bin/bash
+        - -c
+        - >-
+          cd "{{ $storageDir }}/keys";
+          /usr/local/bin/sxt-node key insert --scheme sr25519 --keystore-path {{ $storageDir }}/keys --chain {{ $chainspec }} --key-type aura --suri ${SECRET_SEED};
+          /usr/local/bin/sxt-node key insert --scheme ed25519 --keystore-path {{ $storageDir }}/keys --chain {{ $chainspec }} --key-type gran --suri ${SECRET_SEED};
+          echo -n "${NODE_KEY}" > {{ $storageDir }}/keys/node_key
+        env:
+        - name: SECRET_SEED
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sxt.secret.name }}
+              key: {{ .Values.sxt.secret.key }}
+        - name: NODE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sxt.secret.name }}
+              key: {{ .Values.sxt.secret.nodeKey }}
+        image: "{{ .Values.sxt.image.repository }}:{{ default .Chart.AppVersion .Values.sxt.image.tag }}"
+        imagePullPolicy: {{ .Values.sxt.image.pullPolicy }}
+        volumeMounts:
+        - mountPath: {{ $storageDir }}
+          name: acsdisk
+{{- end }}
+      containers:
+      - command:
+{{- if not .Values.sxt.manual }}
+        - /opt/sxtnode.sh
+        - --base-path
+        - "{{ $storageDir }}/data"
+        - --prometheus-port
+        - "9615"
+        - --pool-limit
+        - "10240"
+        - --pool-kbytes
+        - "1024000"
+{{- if .Values.sxt.isValidator -}}
+{{- if eq .Values.networkID "dev" }}
+        - --dev
+        - --alice
+{{- else }}
+        - --chain
+        - "{{ .Values.sxt.genesisPath }}"
+        - --keystore-path
+        - "{{ $storageDir }}/keys"
+        - --node-key-file
+        - "{{ $storageDir }}/keys/node_key"
+{{- range .Values.sxt.bootnodes }}
+        - --bootnodes
+        - {{ . | quote }}
+{{- end }}
+        - --log
+        - "debug"
+{{- end -}}
+{{- end }}
+        - --port
+        - "{{ .Values.sxt.port }}"
+{{- if .Values.sxt.isValidator }}
+        - --validator
+{{- end }}
+{{- if .Values.sxt.isRpcNode }}
+{{- if ne .Values.networkID "dev" }}
+        - --chain
+        - "{{ .Values.sxt.genesisPath }}"
+{{- range .Values.sxt.bootnodes }}
+        - --bootnodes
+        - {{ . | quote }}
+{{- end }}
+        - --log
+        - "debug"
+{{- end }}
+        - --rpc-rate-limit
+        - "100"
+        - --rpc-external
+        - --rpc-methods
+        - "safe"
+        - --rpc-port
+        - "{{ .Values.sxt.rpcPort }}"
+        - --rpc-max-connections
+        - "100"
+        - --rpc-max-request-size
+        - "256"
+        - --rpc-max-response-size
+        - "256"
+        - --rpc-cors
+        - "all"
+{{- end }}
+{{- else }}
+        - /bin/bash
+        - -c
+        - >-
+          while true; do
+            echo "manual debugging"; sleep 1;
+          done
+{{- end }}
+{{- if .Values.sxt.restartOnFailure }}
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - sxt-node
+          initialDelaySeconds: 180
+          periodSeconds: 5
+{{- end }}
+        env:
+        - name: RUST_BACKTRACE
+          value: "1"
+        - name: RUST_LOG
+          value: info
+{{- if eq $customDBPasswords true }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sxt.dbsecret.name }}
+              key: {{ .Values.sxt.dbsecret.pgkey }}
+        - name: FLIGHTSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sxt.dbsecret.name }}
+              key: {{ .Values.sxt.dbsecret.fsqlkey }}
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sxt.dbsecret.name }}
+              key: {{ .Values.sxt.dbsecret.pgurlkey }}
+{{- end }}
+{{- if .Values.sxt.flightSQL.exposed }}
+        - name: HOST
+          value: "0.0.0.0"
+{{- end }}
+        image: "{{ .Values.sxt.image.repository }}:{{ default .Chart.AppVersion .Values.sxt.image.tag }}"
+        imagePullPolicy: {{ .Values.sxt.image.pullPolicy }}
+        name: alice
+        ports:
+        - containerPort: {{ .Values.sxt.port }}
+          protocol: TCP
+        - containerPort: {{ .Values.sxt.port }}
+          protocol: UDP
+{{- if .Values.sxt.isRpcNode }}
+        - containerPort: {{ .Values.sxt.rpcPort }}
+          protocol: TCP
+{{- end }}
+{{- if .Values.sxt.flightSQL.exposed }}
+        - containerPort: 50555
+          protocol: TCP
+{{- end }}
+        resources:
+          requests:
+            cpu: {{ .Values.sxt.resources.cpu }}
+            memory: {{ .Values.sxt.resources.memory }}
+        volumeMounts:
+        - mountPath: {{ $storageDir }}
+          name: acsdisk
+        - mountPath: /data
+          name: acsdisk
+          subPath: pgdbdata
+        - mountPath: /pg_data
+          name: acsdisk
+          subPath: pgdata
+        - mountPath: /logs
+          name: acsdisk
+          subPath: logs
+        - mountPath: /sxtuser
+          name: acsdisk
+          subPath: sxtuser
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 180
+      imagePullSecrets:
+      - name: {{ .Values.imageRegistryCredentials }}
+      volumes:
+      - name: acsdisk
+        persistentVolumeClaim:
+          claimName: {{ $pvcname }}
