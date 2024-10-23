@@ -1,0 +1,20 @@
+{{- if .Values.sxt.p2pService }}
+{{ $svcname := "sxtnode-p2p-udp-service" }}
+{{ $appname := "sxt-node" }}
+{{- if .Values.sxt.nameSuffix -}}
+{{ $svcname = printf "sxtnode-p2p-udp-service-%s" .Values.sxt.nameSuffix }}
+{{ $appname = printf "sxt-node-%s" .Values.sxt.nameSuffix }}
+{{- end -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $svcname }}
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: "{{ $appname }}-0"
+  ports:
+    - protocol: UDP
+      port: {{ .Values.sxt.p2pLbPort }}
+      targetPort: {{ .Values.sxt.port }}
+{{- end }}

@@ -1,0 +1,21 @@
+{{- if eq .Values.sxt.flightSQL.exposed true -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.sxt.flightSQL.name }}
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-ipv4: {{ .Values.sxt.flightSQL.ipaddr }}
+    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: {{ .Values.sxt.flightSQL.subnet }}
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: {{ .Values.sxt.flightSQL.resourceGroup }}
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    statefulset.kubernetes.io/pod-name: sxt-node-0
+  ports:
+  - protocol: TCP
+    port: 50555
+    targetPort: 50555
+{{- end }}
