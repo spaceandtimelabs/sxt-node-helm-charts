@@ -12,6 +12,10 @@ permissions:
   statuses: write
   id-token: write
 
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
+
 jobs:
   release:
     name: Run Release Manager
