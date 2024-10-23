@@ -37,6 +37,7 @@ jobs:
           skip-tag: true
           output-file: false
           skip-on-empty: false # Always create commit
+          tag-prefix: ""  #remove the 'v' prefix in tag
 
       - name: Format Changelog
         id: format-changelog
