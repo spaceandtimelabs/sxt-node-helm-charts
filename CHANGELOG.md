@@ -1,13 +1,16 @@
-# 0.1.0 (2024-10-23)
+## [0.2.7](https://github.com/spaceandtimelabs/sxt-node-chart-repo/compare/v0.2.6...0.2.7) (2024-10-23)
 
 
-### Features
+### Bug Fixes
 
-* **ci:** Create preview release job ([8af5992](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/8af599285fdbb99a5cca9ab4123986b612a00bd8))
-* **ci:** Create release job ([d643657](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/d64365736160e6cfc727148f76c7544d5c6a1170))
-* Create README ([77991f3](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/77991f392ffb3219a2892663605c3d3125d8a61e))
-* Update Code Owners ([f2b5c9e](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/f2b5c9e40d5d937929dd6fc131e443f1dc3bde66))
-* Update License ([459bbdb](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/459bbdb72423d8b474301071eff9a1c4ba2e75ab))
+* should be version 0.2.6 without v ([d55dc82](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/d55dc8236bea9a9bb84c590b307fe5db40cf07bd))
+* test v0.2.5 ([aaca86c](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/aaca86c8dc66ec8f4e410e1230feec902ebdd6e8))
+* this should be v0.2.6 ([756a859](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/756a8595ee9def24f42a2b9250c1d728e62c40e6))
+* version 0.2.7? ([1aedf05](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/1aedf05bfa841e8158f2e16fe5ae694c72b8d4a1))
+
+
+
+## [0.2.4](https://github.com/spaceandtimelabs/sxt-node-chart-repo/compare/v0.2.3...v0.2.4) (2024-10-23)
 
 
 
