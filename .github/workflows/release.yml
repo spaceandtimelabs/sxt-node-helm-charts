@@ -4,13 +4,7 @@ on:
     branches:
       - main
 
-permissions:
-  checks: write
-  contents: write
-  pages: write
-  pull-requests: write
-  statuses: write
-  id-token: write
+permissions: write-all
 
 env:
   ACTIONS_RUNNER_DEBUG: true
