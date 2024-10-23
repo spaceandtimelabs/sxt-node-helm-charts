@@ -54,14 +54,15 @@ jobs:
           version-file: charts/sxt-node-chart/Chart.yaml
           git-push: false
           skip-on-empty: false # Always create commit
+          tag-prefix: ""  #remove the 'v' prefix in tag
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.conventional-changelog.outputs.tag }}
-          body: ${{ steps.conventional-changelog.outputs.changelog }}
-          token: ${{ steps.app-token.outputs.token }}
-          makeLatest: true
+#      - name: Create Release
+#        uses: ncipollo/release-action@v1
+#        with:
+#          tag: ${{ steps.conventional-changelog.outputs.tag }}
+#          body: ${{ steps.conventional-changelog.outputs.changelog }}
+#          token: ${{ steps.app-token.outputs.token }}
+#          makeLatest: true
 
       - name: Install Helm
         uses: azure/setup-helm@v1
