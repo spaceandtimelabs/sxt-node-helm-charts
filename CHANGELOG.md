@@ -1,4 +1,4 @@
-## [0.2.11](https://github.com/spaceandtimelabs/sxt-node-chart-repo/compare/0.2.10...0.2.11) (2024-10-23)
+## [0.2.12](https://github.com/spaceandtimelabs/sxt-node-chart-repo/compare/0.2.10...0.2.12) (2024-10-23)
 
 
 ### Bug Fixes
