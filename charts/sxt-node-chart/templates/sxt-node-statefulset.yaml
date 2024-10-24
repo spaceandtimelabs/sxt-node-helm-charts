@@ -208,8 +208,14 @@ spec:
               key: {{ .Values.sxt.dbsecret.pgurlkey }}
 {{- end }}
 {{- if .Values.sxt.flightSQL.exposed }}
+        - name: FLIGHTSQL_HOST
+          value: "0.0.0.0"
+        - name: FLIGHTSQL_PORT
+          value: "50555"
         - name: HOST
           value: "0.0.0.0"
+        - name: PORT
+          value: "50555"
 {{- end }}
         image: "{{ .Values.sxt.image.repository }}:{{ default .Chart.AppVersion .Values.sxt.image.tag }}"
         imagePullPolicy: {{ .Values.sxt.image.pullPolicy }}
