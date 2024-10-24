@@ -39,4 +39,61 @@ entries:
     urls:
     - https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/sxt-node-chart-0.2.14/sxt-node-chart-0.2.14.tgz
     version: 0.2.14
-generated: "2024-10-23T21:34:57.453203-06:00"
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-23T22:50:59.375008-06:00"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.11.1
+    - condition: external-dns.enabled
+      name: external-dns
+      repository: https://kubernetes-sigs.github.io/external-dns/
+      version: 1.15.0
+    description: A Helm chart for Kubernetes
+    digest: 77600352e7aead2839b3ad85b5c6251ed06481bf25a767172eb8df8b97edea95
+    name: sxt-node-chart
+    type: application
+    urls:
+    - https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/sxt-node-chart-0.2.12/sxt-node-chart-0.2.12.tgz
+    version: 0.2.12
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-23T22:50:59.151942-06:00"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.11.1
+    - condition: external-dns.enabled
+      name: external-dns
+      repository: https://kubernetes-sigs.github.io/external-dns/
+      version: 1.15.0
+    description: A Helm chart for Kubernetes
+    digest: 1a7f0464be36990a2cf9a58fe10d2f21fa4ba6221a5b5e0ec77e65370ff5e569
+    name: sxt-node-chart
+    type: application
+    urls:
+    - https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/sxt-node-chart-0.2.10/sxt-node-chart-0.2.10.tgz
+    version: 0.2.10
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-10-23T22:51:00.003609-06:00"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.11.1
+    - condition: external-dns.enabled
+      name: external-dns
+      repository: https://kubernetes-sigs.github.io/external-dns/
+      version: 1.15.0
+    description: A Helm chart for Kubernetes
+    digest: 6c18763533b6c4c9d98351589b80a59df7ea4d0e38fd63143004f2e3cf6bf09b
+    name: sxt-node-chart
+    type: application
+    urls:
+    - https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/sxt-node-chart-0.2.7/sxt-node-chart-0.2.7.tgz
+    version: 0.2.7
+generated: "2024-10-23T22:51:00.003625-06:00"
