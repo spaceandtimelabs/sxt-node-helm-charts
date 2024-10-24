@@ -83,3 +83,15 @@ jobs:
           charts_dir: charts
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Continue chart-release
+        run: |
+          mkdir -p .cr-index .cr-release-packages
+          # download index.yaml or start as empty .. the index.yaml needs to be placed inside .cr-index/
+          curl https://spaceandtimelabs.github.io/sxt-node-chart-repo/index.yaml -o .cr-index/index.yaml || touch .cr-index/index.yaml
+          # download all known release packages, the packages needs to be placed inside .cr-release-packages/
+          for i in `git tag|grep sxt-node-chart`; do
+          curl -L https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/${i}/${i}.tgz -o .cr-release-packages/${i}.tgz
+          file .cr-release-packages/${i}.tgz |grep "gzip compressed data" || rm -f .cr-release-packages/${i}.tgz
+          done
+          # cr command.. will fail
+          cr index --owner "spaceandtimelabs" --git-repo sxt-node-chart-repo --push || cat .cr-index/index.yaml
