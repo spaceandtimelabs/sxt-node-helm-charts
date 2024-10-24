@@ -84,6 +84,8 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: Continue chart-release
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
           mkdir -p .cr-index .cr-release-packages
           # download index.yaml or start as empty .. the index.yaml needs to be placed inside .cr-index/
