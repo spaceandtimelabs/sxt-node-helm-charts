@@ -1,8 +1,9 @@
-# [0.3.0](https://github.com/spaceandtimelabs/sxt-node-chart-repo/compare/0.2.16...0.3.0) (2024-10-24)
+## [0.3.1](https://github.com/spaceandtimelabs/sxt-node-chart-repo/compare/0.3.0...0.3.1) (2024-10-24)
 
 
 ### Bug Fixes
 
+* add CR_TOKEN to continuation script ([5118826](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/5118826c3b3b2554a19dbcbbfb34dae9117e38ea))
 * add git ignore ([51c3fce](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/51c3fce24bc9f76b177320d78478db987df07351))
 * allow chart-releaser to continue on error ([588657b](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/588657b2a20185cef094d413e807b1c801d06826))
 * allow empty for test ([3ebb4cd](https://github.com/spaceandtimelabs/sxt-node-chart-repo/commit/3ebb4cdd6dca3f2777dfa2c2725cbdd561c0cb7c))
