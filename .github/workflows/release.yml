@@ -97,3 +97,8 @@ jobs:
           done
           # cr command.. will fail
           cr index --owner "spaceandtimelabs" --git-repo sxt-node-chart-repo --push || cat .cr-index/index.yaml
+          git checkout -t origin/gh-pages
+          mv .cr-index/index.yaml index.yaml
+          git add index.yaml
+          git commit -m "update index.yaml"
+          git push origin HEAD
