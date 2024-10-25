@@ -11,7 +11,10 @@ For installation on Kubernetes we have created a helm chart sxt-node-chart. Addi
 
 Once the Helm configuration is done (assume to be located at `./values.yaml`, we can now run the following command with proper KUBECONFIG to install the chart:
 
-```helm upgrade --install sxt-testnet-validator sxt-charts/sxt-node-chart --version=0.3.4 -n sxt-testnet --create-namespace -f ./values.yaml --dependency-update```
+```
+   helm upgrade --install sxt-testnet-validator sxt-charts/sxt-node-chart
+   --version=0.3.4 -n sxt-testnet --create-namespace -f ./values.yaml --dependency-update
+```
 
 
 
