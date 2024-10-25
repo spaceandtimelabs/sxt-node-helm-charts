@@ -89,12 +89,16 @@ jobs:
         run: |
           mkdir -p .cr-index .cr-release-packages
           # download index.yaml or start as empty .. the index.yaml needs to be placed inside .cr-index/
-          curl https://spaceandtimelabs.github.io/sxt-node-chart-repo/index.yaml -o .cr-index/index.yaml || touch .cr-index/index.yaml
+          curl --fail https://spaceandtimelabs.github.io/sxt-node-chart-repo/index.yaml -o .cr-index/index.yaml || touch .cr-index/index.yaml
           # download all known release packages, the packages needs to be placed inside .cr-release-packages/
-          for i in `git tag|grep sxt-node-chart`; do
-          curl -L https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/${i}/${i}.tgz -o .cr-release-packages/${i}.tgz
-          file .cr-release-packages/${i}.tgz |grep "gzip compressed data" || rm -f .cr-release-packages/${i}.tgz
+          curl --fail -L -H "Authorization: token $CR_TOKEN" https://api.github.com/repos/spaceandtimelabs/sxt-node-chart-repo/releases | jq -r '.[].assets[] | (.name, .url)' | xargs -n 2 | while read name url; do
+            curl --fail -L -H "Authorization: token $CR_TOKEN" -H 'Accept: application/octet-stream' $url -o .cr-release-packages/$name
+            file .cr-release-packages/${i}.tgz |grep "gzip compressed data" || rm -f .cr-release-packages/${i}.tgz
           done
           # cr command.. will fail
           cr index --owner "spaceandtimelabs" --git-repo sxt-node-chart-repo --push || cat .cr-index/index.yaml
-          git push origin HEAD:gh-pages
+          git checkout -t origin/gh-pages
+          mv .cr-index/index.yaml index.yaml
+          git add index.yaml
+          git commit -m "update index.yaml"
+          git push origin HEAD
