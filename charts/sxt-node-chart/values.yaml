@@ -13,6 +13,7 @@ sxt:
   restartOnFailure: true
   useExistingPV: false
   isValidator: true
+  isDatabase: false
   isRpcNode: false
   flightSQL:
     enabled: false
@@ -23,22 +24,23 @@ sxt:
   existingPV:
   manual: false
   image:
-    repository: spaceandtime.jfrog.io/sxt-docker-central/sxt-node
+    repository: ghcr.io/spaceandtimelabs/sxt-node
     pullPolicy: IfNotPresent
-    tag: "0.8.0"
+    tag: "testnet-0.45.1"
   p2pService: true
   port: 30333
   rpcPort: 9944
   p2pLbPort: 30333
   genesisPath:
   bootnodes:
-    - /ip4/40.91.75.245/tcp/30333/p2p/12D3KooWDV5kmYUR5nxruFBfdGX2ZMR43iSe3SfmopZ3sLBFvZzc
-    - /ip4/20.99.130.169/tcp/30333/p2p/12D3KooWGAQAg7iZgyn8wnnT8nkDo9NVAPbfubpMgL1mYTRNgjdD
-    - /ip4/40.65.73.118/tcp/30333/p2p/12D3KooWLLf8tW3PPbj9MCda9rfypNN5xyZRi1bKoLj8s9UkeJDZ
+    - /dns/bootnode0.testnet.sxt.network/tcp/30333/p2p/12D3KooWDV5kmYUR5nxruFBfdGX2ZMR43iSe3SfmopZ3sLBFvZzc
+    - /dns/bootnode1.testnet.sxt.network/tcp/30333/p2p/12D3KooWGAQAg7iZgyn8wnnT8nkDo9NVAPbfubpMgL1mYTRNgjdD
+    - /dns/bootnode2.testnet.sxt.network/tcp/30333/p2p/12D3KooWLLf8tW3PPbj9MCda9rfypNN5xyZRi1bKoLj8s9UkeJDZ
   secret:
     name: "validatorseed"
     key: "Secret-Seed"
     nodeKey: "Node-Key"
+# This only needed when sxt.isDatabase is set to true
 #  dbsecret:
 #    name: "sxt-db-passwords"
 #    pgkey: "PGDB_PASSWORD"
@@ -50,8 +52,13 @@ sxt:
     ipaddr:
     subnet:
     resourceGroup:
-    selectors:
-      statefulset.kubernetes.io/pod-name: sxt-node-0
+    selectors: {}
+    type: LoadBalancer
+    annotations: {}
+  internalService:
+    enabled: false
+    name: sxt-node-jsonrpc-svc-internal
+    selectors: {}
     type: LoadBalancer
     annotations: {}
   nodeSelectors:
