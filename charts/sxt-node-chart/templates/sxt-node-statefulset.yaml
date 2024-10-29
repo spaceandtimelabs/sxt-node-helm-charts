@@ -157,9 +157,9 @@ spec:
         - --rpc-max-connections
         - "100"
         - --rpc-max-request-size
-        - "256"
+        - "1024"
         - --rpc-max-response-size
-        - "256"
+        - "1024"
         - --rpc-cors
         - "all"
 {{- end }}
