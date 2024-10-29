@@ -4,7 +4,8 @@ sxt-node helm chart repository
 
 For installation on Kubernetes we have created a helm chart sxt-node-chart. Adding Helm repository with following command:
 
-```helm repo add sxt-charts https://spaceandtimelabs.github.io/sxt-node-chart-repo
+```
+   helm repo add sxt-charts https://spaceandtimelabs.github.io/sxt-node-chart-repo
    helm repo update sxt-charts
    helm search repo sxt-charts --versions
 ```
