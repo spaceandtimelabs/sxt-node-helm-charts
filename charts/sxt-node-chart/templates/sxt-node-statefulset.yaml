@@ -148,14 +148,14 @@ spec:
 {{- end }}
 {{- if .Values.sxt.isRpcNode }}
         - --rpc-rate-limit
-        - "100"
+        - "250"
         - --rpc-external
         - --rpc-methods
         - "safe"
         - --rpc-port
         - "{{ .Values.sxt.rpcPort }}"
         - --rpc-max-connections
-        - "100"
+        - "10000"
         - --rpc-max-request-size
         - "1024"
         - --rpc-max-response-size
