@@ -184,7 +184,7 @@ spec:
         - name: RUST_BACKTRACE
           value: "1"
         - name: RUST_LOG
-          value: "runtime=debug"
+          value: "info"
 {{- if eq $customDBPasswords true }}
         - name: POSTGRES_PASSWORD
           valueFrom:
