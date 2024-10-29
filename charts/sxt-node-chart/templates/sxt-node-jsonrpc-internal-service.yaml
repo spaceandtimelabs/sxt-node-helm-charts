@@ -1,0 +1,22 @@
+{{- if eq .Values.sxt.internalService.enabled true -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.sxt.internalService.name }}
+  annotations:
+{{- range $env_key, $env_value := .Values.sxt.internalService.annotations }}
+    {{ $env_key }}: "{{ $env_value }}"
+{{- end }}
+spec:
+  type: {{ .Values.sxt.internalService.type }}
+  selector:
+{{- range $env_key, $env_value := .Values.sxt.internalService.selectors }}
+    {{ $env_key }}: "{{ $env_value }}"
+{{- end }}
+  ports:
+  - name: rpc
+    protocol: TCP
+    port: {{ .Values.sxt.rpcPort }}
+    targetPort: {{ .Values.sxt.rpcPort }}
+{{- end }}

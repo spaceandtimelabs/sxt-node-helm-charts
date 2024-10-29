@@ -117,41 +117,36 @@ spec:
         - "10240"
         - --pool-kbytes
         - "1024000"
-{{- if .Values.sxt.isValidator -}}
-{{- if eq .Values.networkID "dev" }}
-        - --dev
-        - --alice
-{{- else }}
-        - --chain
-        - "{{ .Values.sxt.genesisPath }}"
-        - --keystore-path
-        - "{{ $storageDir }}/keys"
-        - --node-key-file
-        - "{{ $storageDir }}/keys/node_key"
 {{- range .Values.sxt.bootnodes }}
         - --bootnodes
         - {{ . | quote }}
 {{- end }}
         - --log
-        - "debug"
+        - "info"
+{{- if ne .Values.networkID "dev" }}
+        - --chain
+        - "{{ .Values.sxt.genesisPath }}"
+{{- end }}
+{{- if .Values.sxt.isValidator -}}
+{{- if eq .Values.networkID "dev" }}
+        - --dev
+        - --alice
+{{- else }}
+        - --keystore-path
+        - "{{ $storageDir }}/keys"
+        - --node-key-file
+        - "{{ $storageDir }}/keys/node_key"
 {{- end -}}
 {{- end }}
         - --port
         - "{{ .Values.sxt.port }}"
 {{- if .Values.sxt.isValidator }}
         - --validator
+{{- if .Values.sxt.isDatabase }}
+        - --with-db
+{{- end -}}
 {{- end }}
 {{- if .Values.sxt.isRpcNode }}
-{{- if ne .Values.networkID "dev" }}
-        - --chain
-        - "{{ .Values.sxt.genesisPath }}"
-{{- range .Values.sxt.bootnodes }}
-        - --bootnodes
-        - {{ . | quote }}
-{{- end }}
-        - --log
-        - "debug"
-{{- end }}
         - --rpc-rate-limit
         - "100"
         - --rpc-external
@@ -189,7 +184,7 @@ spec:
         - name: RUST_BACKTRACE
           value: "1"
         - name: RUST_LOG
-          value: info
+          value: "runtime=debug"
 {{- if eq $customDBPasswords true }}
         - name: POSTGRES_PASSWORD
           valueFrom:
