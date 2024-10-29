@@ -3,6 +3,25 @@ entries:
   sxt-node-chart:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-10-29T22:53:24.301292639Z"
+    dependencies:
+    - condition: ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.11.1
+    - condition: external-dns.enabled
+      name: external-dns
+      repository: https://kubernetes-sigs.github.io/external-dns/
+      version: 1.15.0
+    description: SXT-Node Testnet Helm Chart
+    digest: e550563d358741f891f1ba7c8f0948aabcac9bf2599e2fc0edb81d0d8ebe6ea0
+    name: sxt-node-chart
+    type: application
+    urls:
+    - https://github.com/spaceandtimelabs/sxt-node-helm-charts/releases/download/sxt-node-chart-0.3.9/sxt-node-chart-0.3.9.tgz
+    version: 0.3.9
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-10-29T20:30:15.822432951Z"
     dependencies:
     - condition: ingress-nginx.enabled
@@ -286,4 +305,4 @@ entries:
     urls:
     - https://github.com/spaceandtimelabs/sxt-node-chart-repo/releases/download/sxt-node-chart-0.2.7/sxt-node-chart-0.2.7.tgz
     version: 0.2.7
-generated: "2024-10-29T20:30:15.822552244Z"
+generated: "2024-10-29T22:53:24.301423955Z"
