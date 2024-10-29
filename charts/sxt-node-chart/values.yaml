@@ -52,15 +52,13 @@ sxt:
     ipaddr:
     subnet:
     resourceGroup:
-    selectors:
-#      statefulset.kubernetes.io/pod-name: sxt-node-0
+    selectors: {}
     type: LoadBalancer
     annotations: {}
   internalService:
     enabled: false
     name: sxt-node-jsonrpc-svc-internal
-    selectors:
-#      statefulset.kubernetes.io/pod-name: sxt-node-0
+    selectors: {}
     type: LoadBalancer
     annotations: {}
   nodeSelectors:
