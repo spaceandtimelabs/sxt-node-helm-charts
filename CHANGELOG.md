@@ -1,4 +1,4 @@
-## [0.3.11](https://github.com/spaceandtimelabs/sxt-node-helm-charts/compare/0.3.10...0.3.11) (2024-10-30)
+# [0.4.0](https://github.com/spaceandtimelabs/sxt-node-helm-charts/compare/0.3.11...0.4.0) (2024-11-11)
 
 
 ### Bug Fixes
@@ -11,6 +11,11 @@
 * update License ([9190faa](https://github.com/spaceandtimelabs/sxt-node-helm-charts/commit/9190faafbe4e6d399c05530e03c3c7ef7c7c2d6c))
 * updated config based on review suggestions ([b7850ef](https://github.com/spaceandtimelabs/sxt-node-helm-charts/commit/b7850efc3ae3e3409bfa577cf5d020d9678f05d5))
 * while testing rpc performance, Ada said we just go crazy with this ([76ab00e](https://github.com/spaceandtimelabs/sxt-node-helm-charts/commit/76ab00e6cfda8eaccc146b849218e88ed6415434))
+
+
+### Features
+
+* Updated sxt-node charts to support configurable RPC options ([6c22d48](https://github.com/spaceandtimelabs/sxt-node-helm-charts/commit/6c22d48ced39f179a4c6a5b9af97ccb6354a35dd))
 
 
 
