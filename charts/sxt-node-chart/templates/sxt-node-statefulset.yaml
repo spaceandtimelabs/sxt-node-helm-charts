@@ -148,18 +148,18 @@ spec:
 {{- end }}
 {{- if .Values.sxt.isRpcNode }}
         - --rpc-rate-limit
-        - "250"
+        - "{{ .Values.sxt.rpc.rate }}"
         - --rpc-external
         - --rpc-methods
-        - "safe"
+        - "{{ .Values.sxt.rpc.methods }}"
         - --rpc-port
-        - "{{ .Values.sxt.rpcPort }}"
+        - "{{ .Values.sxt.rpc.port }}"
         - --rpc-max-connections
-        - "10000"
+        - "{{ .Values.sxt.rpc.maxConnections }}"
         - --rpc-max-request-size
-        - "1024"
+        - "{{ .Values.sxt.rpc.maxRequestSize }}"
         - --rpc-max-response-size
-        - "1024"
+        - "{{ .Values.sxt.rpc.maxResponseSize }}"
         - --rpc-cors
         - "all"
 {{- end }}
