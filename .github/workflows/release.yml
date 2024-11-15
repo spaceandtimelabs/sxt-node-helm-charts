@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - version.txt
 
 permissions: write-all
 
@@ -21,8 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-          # Make sure the value of GITHUB_TOKEN will not be persisted in repo's config
-          persist-credentials: false
+          persist-credentials: true
           # Pull all previous tags
           fetch-depth: 0
           fetch-tags: true
@@ -32,46 +33,47 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Conventional Changelog Action
-        id: conventional-changelog
-        uses: TriPSs/conventional-changelog-action@v5
-        with:
-          github-token: ${{ secrets.GH_TOKEN }}
-          skip-git-pull: true
-          skip-version-file: false
-          version-file: charts/sxt-node-chart/Chart.yaml
-          git-push: true
-          skip-on-empty: false # Always create commit
-          tag-prefix: ""  #remove the 'v' prefix in tag
-
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.14.4
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
-        continue-on-error: true
-        with:
-          charts_dir: charts
-        env:
-          CR_TOKEN: "${{ secrets.GH_TOKEN }}"
-      - name: Continue chart-release
-        env:
-          CR_TOKEN: "${{ secrets.GH_TOKEN }}"
+      - name: Pull Helm Chart
         run: |
-          mkdir -p .cr-index .cr-release-packages
-          # download index.yaml or start as empty .. the index.yaml needs to be placed inside .cr-index/
-          curl --fail https://spaceandtimelabs.github.io/sxt-node-chart-repo/index.yaml -o .cr-index/index.yaml || touch .cr-index/index.yaml
-          # download all known release packages, the packages needs to be placed inside .cr-release-packages/
-          curl --fail -L -H "Authorization: token $CR_TOKEN" https://api.github.com/repos/spaceandtimelabs/sxt-node-chart-repo/releases | jq -r '.[].assets[] | (.name, .url)' | xargs -n 2 | while read name url; do
-            curl --fail -L -H "Authorization: token $CR_TOKEN" -H 'Accept: application/octet-stream' $url -o .cr-release-packages/$name
-            file .cr-release-packages/${i}.tgz |grep "gzip compressed data" || rm -f .cr-release-packages/${i}.tgz
-          done
-          # cr command.. will fail
-          cr index --owner "spaceandtimelabs" --git-repo sxt-node-chart-repo || cat .cr-index/index.yaml
-          git checkout -t origin/gh-pages
-          mv .cr-index/index.yaml index.yaml
+          helm repo add sxt-charts-central https://spaceandtime.jfrog.io/artifactory/api/helm/sxt-charts-central --username ${{secrets.ARTIFACTORY_USER}} --password ${{secrets.ARTIFACTORY_API_KEY}}
+          version=$(cat version.txt)
+          mkdir -p .cr-release-packages/$version
+          helm pull sxt-charts-central/sxt-node-chart --version $version --destination .cr-release-packages/$version
+          mkdir -p charts
+          tar xf .cr-release-packages/$version/sxt-node-chart-$version.tgz -C charts
+          touch charts/sxt-node-chart/templates/NOTES.txt
+          echo "version=$version" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.version }}
+          bodyFile: charts/sxt-node-chart/templates/NOTES.txt
+          token: ${{ secrets.GH_TOKEN }}
+          makeLatest: true
+          artifacts: ".cr-release-packages/${{ env.version }}/*.tgz"
+          artifactErrorsFailBuild: true
+
+      - name: Continue chart-release
+        run: |
+          set -x
+          if git rev-parse --verify --quiet origin/gh-pages:index.yaml; then
+            git cat-file -p origin/gh-pages:index.yaml > .cr-release-packages/index.yaml
+          fi
+
+          if [ -e .cr-release-packages/index.yaml ]; then
+            helm repo index .cr-release-packages --url "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download" --merge .cr-release-packages/index.yaml
+          else
+            helm repo index .cr-release-packages --url "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download"
+          fi
+
+          git switch -t origin/gh-pages || git switch --orphan gh-pages
+          mv .cr-release-packages/index.yaml index.yaml
           git add index.yaml
           git commit -m "update index.yaml"
           git push origin HEAD
