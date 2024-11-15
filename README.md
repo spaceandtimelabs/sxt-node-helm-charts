@@ -14,7 +14,7 @@ Once the Helm configuration is done (assume to be located at `./values.yaml`, we
 
 ```
 helm upgrade --install sxt-testnet-validator sxt-charts/sxt-node-chart \
-    --version=0.3.4 -n sxt-testnet --create-namespace -f ./values.yaml --dependency-update
+    -n sxt-testnet --create-namespace -f ./values.yaml --dependency-update
 ```
 
 
